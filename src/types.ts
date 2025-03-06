@@ -24,6 +24,13 @@ export interface Store {
     gmDollars: number | null;
     gmPercent: number | null;
   }
+
+  // Chart data
+  export interface ChartData {
+    week: string;
+    gmDollars: number;
+    gmPercent: number;
+  }
   
   // Redux state shape
   export interface AppState {
