@@ -7,7 +7,7 @@ const App = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vh' }}>
       <TopNav />
-       <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden', backgroundColor: '#ffffff', maxWidth: 200 }}>
+       <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden', backgroundColor: '#fefefe', maxWidth: 200 }}>
         <Sidebar />
         <Box 
           component="main" 

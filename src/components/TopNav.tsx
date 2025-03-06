@@ -12,6 +12,7 @@ const TopNav = () => {
         paddingRight: 2,
         paddingLeft: 2,
         transform: 'none !important',
+        backgroundColor: '#fefefe'
       }}
     >
       <Toolbar
@@ -21,17 +22,18 @@ const TopNav = () => {
           minHeight: '64px !important',
         }}
       >
-        {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Data Viewer
-        </Typography> */}
+        
         <Logo
           style={{ 
             height: '80px', 
             width: 'auto', 
-            marginRight: '20px' 
+            marginRight: 'auto' ,
           }} 
         />
-        <Button color="inherit">Sign In</Button>
+        <Typography variant="h3" component="div" sx={{ color:"#000", mr: 'auto', fontWeight: '600' }}>
+          Data Viewer App
+        </Typography>
+        <Button style={{color: '#000', fontSize: 16, fontWeight: '600'}}>Sign Out</Button>
       </Toolbar>
     </AppBar>
   );
