@@ -7,6 +7,7 @@ import StoreForm from './StoreForm';
 const StoreList = () => {
   const dispatch = useAppDispatch();
   const stores = useAppSelector(state => state.stores.items);
+  console.log(JSON.stringify(stores, null, 2));
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -45,6 +46,10 @@ const StoreList = () => {
         </Droppable>
       </DragDropContext>
     </div>
+    // <div style={{ paddingLeft: 200 }}>
+    //   <h1 style={{backgroundColor: '#fff'}}>Stores Management</h1>
+    //   <pre>{JSON.stringify(stores, null, 2)}</pre>
+    // </div>
   );
 };
 

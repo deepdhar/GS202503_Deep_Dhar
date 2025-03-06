@@ -1,21 +1,37 @@
-import { createBrowserRouter } from 'react-router-dom';
-import App from '../App';
-import StoreList from '../features/stores/StoreList';
-import PlanningGrid from '../features/planning/PlanningGrid';
-import GMChart from '../features/chart/GMChart';
-import SKUList from '../features/skus/SKUList';
+import { createBrowserRouter } from "react-router-dom";
+import App from "../App";
+import StoreList from "../features/stores/StoreList";
+import PlanningGrid from "../features/planning/PlanningGrid";
+import GMChart from "../features/chart/GMChart";
+import SKUList from "../features/skus/SKUList";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <App />,
     children: [
-      { path: 'stores', element: <StoreList /> },
-      { path: 'skus', element: <SKUList /> },
-      { path: 'planning', element: <PlanningGrid /> },
-      { path: 'chart', element: <GMChart /> }
-    ]
-  }
+      {
+        path: "stores",
+        element: <StoreList />,
+      },
+      { 
+        path: "skus", 
+        element: <SKUList /> 
+      },
+      { 
+        path: "planning", 
+        element: <PlanningGrid /> 
+      },
+      { 
+        path: "chart", 
+        element: <GMChart /> 
+      },
+      {
+        index: true,
+        element: <StoreList />,
+      },
+    ],
+  },
 ]);
 
 export default router;

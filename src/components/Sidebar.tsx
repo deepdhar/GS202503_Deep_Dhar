@@ -17,7 +17,15 @@ const Sidebar = () => {
 
   return (
     <nav>
-      <List>
+      <List
+        sx={{ 
+          width: 240,
+          height: 'calc(100vh - 64px)',
+          position: 'fixed',
+          overflow: 'auto',
+          bgcolor: 'background.paper'
+        }}
+      >
         {navItems.map((item) => (
           <ListItem key={item.path} disablePadding>
             <ListItemButton
@@ -26,6 +34,7 @@ const Sidebar = () => {
               sx={{
                 '&.active': {
                   backgroundColor: 'action.selected',
+                  fontWeight: 'bold'
                 }
               }}
             >

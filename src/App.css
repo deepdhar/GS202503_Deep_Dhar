@@ -10,8 +10,19 @@
   flex-direction: column;
 }
 
+
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow: hidden; /* Prevent double scrollbars */
+}
+
+/* Force content area to be visible */
+.MuiBox-root main {
+  z-index: 10 !important;
+  background: white !important; /* Add background color */
+}
+
+h3 {
+  color: '#000000';
 }
