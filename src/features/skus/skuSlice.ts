@@ -13,19 +13,24 @@ const skuSlice = createSlice({
   name: 'skus',
   initialState,
   reducers: {
-    addSKU: (state, action: PayloadAction<Omit<SKU, 'id'>>) => {
-      const newId = `SKU-${Date.now()}`;
-      state.items.push({ ...action.payload, id: newId });
+    addSKU: (state, action: PayloadAction<SKU>) => {
+      state.items.push(action.payload);
+    },
+    deleteSKU: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter(sku => sku.id !== action.payload);
     },
     updateSKU: (state, action: PayloadAction<SKU>) => {
       const index = state.items.findIndex(s => s.id === action.payload.id);
       if (index !== -1) state.items[index] = action.payload;
     },
-    removeSKU: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(s => s.id !== action.payload);
+    reorderSKUs: (state, action: PayloadAction<{ oldIndex: number; newIndex: number }>) => {
+      const items = [...state.items];
+      const [movedItem] = items.splice(action.payload.oldIndex, 1);
+      items.splice(action.payload.newIndex, 0, movedItem);
+      state.items = items;
     }
   }
 });
 
-export const { addSKU, updateSKU, removeSKU } = skuSlice.actions;
+export const { addSKU, deleteSKU, updateSKU, reorderSKUs } = skuSlice.actions;
 export default skuSlice.reducer;

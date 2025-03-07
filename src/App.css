@@ -26,5 +26,21 @@ body {
 
 .ag-theme-material .ag-header-cell {
   font-weight: 600;
-  background-color: red;
+  background-color: rgb(220, 241, 255);
+  color: #000;
+  font-size:medium;
+  cursor: default !important;
+}
+
+
+
+/* Enable row dragging cursor */
+.ag-theme-material .row-drag-handle {
+  cursor: move;
+}
+
+/* Add visual feedback during drag */
+.ag-theme-material .ag-row-dragging {
+  background: #fafafa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }

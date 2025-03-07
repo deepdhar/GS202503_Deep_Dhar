@@ -50,9 +50,19 @@ const storeSlice = createSlice({
     },
     deleteStore: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter(store => store.id !== action.payload);
+    },
+    updateStore: (state, action: PayloadAction<Store>) => {
+      const index = state.items.findIndex(s => s.id === action.payload.id);
+      if (index !== -1) state.items[index] = action.payload;
+    },
+    reorderStores: (state, action: PayloadAction<{ oldIndex: number; newIndex: number }>) => {
+      const items = [...state.items];
+      const [movedItem] = items.splice(action.payload.oldIndex, 1);
+      items.splice(action.payload.newIndex, 0, movedItem);
+      state.items = items;
     }
   }
 });
 
-export const { addStore, deleteStore } = storeSlice.actions;
+export const { addStore, deleteStore, updateStore, reorderStores } = storeSlice.actions;
 export default storeSlice.reducer;
