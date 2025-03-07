@@ -40,7 +40,9 @@ const planningSlice = createSlice({
       const end = endOfYear(new Date(currentYear, 11, 31));
 
       state.rows = action.payload.stores.flatMap(store => 
-        action.payload.skus.map(sku => ({
+        action.payload.skus
+          .filter(sku => sku.storeId === store.id)
+          .map(sku => ({
           storeId: store.id,
           skuId: sku.id,
           price: sku.price,

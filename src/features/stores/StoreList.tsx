@@ -86,7 +86,10 @@ const StoreList = () => {
     if (editStore) {
       dispatch(updateStore({ ...data, id: editStore.id }));
     } else {
-      dispatch(addStore(data));
+      dispatch(addStore({
+        ...data,
+        skus: []
+      }));
     }
     setOpen(false);
     reset();
@@ -155,7 +158,7 @@ const StoreList = () => {
           boxShadow: 24,
           p: 4
         }}>
-          <Typography variant="h6" mb={2}>
+          <Typography color='#000' variant="h6" mb={2}>
             {editStore ? 'Edit Store' : 'Add New Store'}
           </Typography>
           <form onSubmit={handleSubmit(handleAddStore)}>

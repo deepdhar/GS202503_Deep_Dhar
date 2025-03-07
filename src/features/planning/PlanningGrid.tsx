@@ -71,6 +71,7 @@ const PlanningGrid = () => {
           },
           {
             headerName: 'Sales Dollars',
+            editable: true,
             field: `weeks.${weekKey}.salesDollars`,
             width: 150,
             valueFormatter: params => 

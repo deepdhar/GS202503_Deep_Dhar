@@ -3,7 +3,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { useAppDispatch, useAppSelector } from '../../app/store';
-import { Modal, Box, Typography, TextField, IconButton, Button } from '@mui/material';
+import { Modal, Box, Typography, TextField, IconButton, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { addSKU, deleteSKU, updateSKU, reorderSKUs } from './skuSlice';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,6 +15,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 const SKUList = () => {
   const dispatch = useAppDispatch();
   const skus = useAppSelector((state) => state.skus.items);
+  const stores = useAppSelector((state) => state.stores.items);
   const [open, setOpen] = useState(false);
   const [editSKU, setEditSKU] = useState<SKU | null>(null);
   const { register, handleSubmit, reset, setValue } = useForm<SKU>();
@@ -89,7 +90,11 @@ const SKUList = () => {
     if (editSKU?.id) {
       dispatch(updateSKU({ ...data, id: editSKU.id }));
     } else {
-      dispatch(addSKU({ ...data, id: `SKU-${Date.now()}` }));
+      dispatch(addSKU({ 
+        ...data, 
+        id: `SKU-${Date.now()}` ,
+        storeId: Number(data.storeId)
+      }));
     }
     setOpen(false);
     reset();
@@ -161,6 +166,20 @@ const SKUList = () => {
             {editSKU ? 'Edit SKU' : 'Add New SKU'}
           </Typography>
           <form onSubmit={handleSubmit(handleAddSKU)}>
+            <FormControl fullWidth margin="normal" required>
+              <InputLabel>Store</InputLabel>
+              <Select
+                label="Store"
+                {...register('storeId', { required: true })}
+              >
+                {stores.map(store => (
+                  <MenuItem key={store.id} value={store.id}>
+                    {store.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <TextField
               label="SKU Name"
               fullWidth

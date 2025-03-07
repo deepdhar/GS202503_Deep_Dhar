@@ -4,11 +4,13 @@ export interface Store {
     name: string;
     city: string;
     state: string;
+    skus: string[];
   }
   
   // SKU type
   export interface SKU {
     id: string;
+    storeId: number; 
     name: string;
     price: number;
     cost: number;
