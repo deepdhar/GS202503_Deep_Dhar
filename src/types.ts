@@ -1,6 +1,6 @@
 // Store type
 export interface Store {
-    id: number;
+    id: string;
     name: string;
     city: string;
     state: string;

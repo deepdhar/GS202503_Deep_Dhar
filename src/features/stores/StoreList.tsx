@@ -1,33 +1,23 @@
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { Store } from '../../types';
-import StoreForm from './StoreForm';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { Box, Button, IconButton, Modal, TextField, Typography } from '@mui/material';
 import { deleteStore, addStore, updateStore, reorderStores } from './storeSlice';
-import { themeBalham } from '@ag-grid-community/core';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useCallback, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-interface StoreFormData {
-  id?: string;
-  name: string;
-  city: string;
-  state: string;
-}
 
 const StoreList = () => {
   const dispatch = useAppDispatch();
   const stores = useAppSelector(state => state.stores.items);
   const [open, setOpen] = useState(false);
-  const [editStore, setEditStore] = useState<StoreFormData | null>(null);
-  const { register, handleSubmit, reset, setValue } = useForm<StoreFormData>();
+  const [editStore, setEditStore] = useState<Store | null>(null);
+  const { register, handleSubmit, reset, setValue } = useForm<Store>();
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -87,7 +77,7 @@ const StoreList = () => {
     resizable: true,
   };
 
-  const handleAddStore: SubmitHandler<StoreFormData> = (data) => {
+  const handleAddStore: SubmitHandler<Store> = (data) => {
     if (editStore) {
       dispatch(updateStore({ ...data, id: editStore.id }));
     } else {
@@ -98,7 +88,7 @@ const StoreList = () => {
     setEditStore(null);
   };
 
-  const handleEdit = (store: StoreFormData) => {
+  const handleEdit = (store: Store) => {
     setEditStore(store);
     setValue('name', store.name);
     setValue('city', store.city);

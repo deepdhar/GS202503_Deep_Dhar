@@ -7,22 +7,16 @@ import { Modal, Box, Typography, TextField, IconButton, Button } from '@mui/mate
 import { addSKU, deleteSKU, updateSKU, reorderSKUs } from './skuSlice';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { SKU } from '../../types';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-interface SKUFormData {
-  id?: string;
-  name: string;
-  price: number;
-  cost: number;
-}
 
 const SKUList = () => {
   const dispatch = useAppDispatch();
   const skus = useAppSelector((state) => state.skus.items);
   const [open, setOpen] = useState(false);
-  const [editSKU, setEditSKU] = useState<SKUFormData | null>(null);
-  const { register, handleSubmit, reset, setValue } = useForm<SKUFormData>();
+  const [editSKU, setEditSKU] = useState<SKU | null>(null);
+  const { register, handleSubmit, reset, setValue } = useForm<SKU>();
 
   const columnDefs = [
     {
@@ -86,7 +80,7 @@ const SKUList = () => {
     }
   ];
 
-  const handleAddSKU: SubmitHandler<SKUFormData> = (data) => {
+  const handleAddSKU: SubmitHandler<SKU> = (data) => {
     if (editSKU?.id) {
       dispatch(updateSKU({ ...data, id: editSKU.id }));
     } else {
@@ -97,7 +91,7 @@ const SKUList = () => {
     setEditSKU(null);
   };
 
-  const handleEdit = (sku: SKUFormData) => {
+  const handleEdit = (sku: SKU) => {
     setEditSKU(sku);
     setValue('name', sku.name);
     setValue('price', sku.price);
