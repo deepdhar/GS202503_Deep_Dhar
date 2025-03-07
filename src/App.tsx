@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import TopNav from './components/TopNav';
 import Sidebar from './components/Sidebar';
 import { Box } from '@mui/material';
+import './App.css'
 
 const App = () => {
   return (
