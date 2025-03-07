@@ -1,65 +1,179 @@
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, ValueFormatterParams } from 'ag-grid-community';
-import { useAppSelector } from '../../app/store';
-import { PlanningRow } from '../../types';
+import { useCallback, useMemo } from 'react';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { useAppDispatch, useAppSelector } from '../../app/store';
+import { eachWeekOfInterval, format, getWeek } from 'date-fns';
+import { Box } from '@mui/material';
+import { updateSalesUnits } from './planningSlice';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const PlanningGrid = () => {
-  const planningData = useAppSelector(state => state.planning);
-  
-  const columnDefs: ColDef[] = [
-    { 
-      headerName: 'Store', 
-      field: 'storeId',
-      valueFormatter: (params: ValueFormatterParams) => 
-        stores.find(s => s.id === params.value)?.name || ''
-    },
-    {
-      headerName: 'SKU',
-      field: 'skuId',
-      valueFormatter: (params: ValueFormatterParams) => 
-        skus.find(s => s.id === params.value)?.name || ''
-    },
-    {
-      headerName: 'Sales Units',
-      field: 'salesUnits',
-      editable: true,
-      cellDataType: 'number'
-    },
-    {
-      headerName: 'Sales Dollars',
-      field: 'salesDollars',
-      valueFormatter: (params: ValueFormatterParams) => 
-        `$${params.value?.toFixed(2) || '0.00'}`
-    },
-    {
-      headerName: 'GM Dollars',
-      field: 'gmDollars',
-      valueFormatter: (params: ValueFormatterParams) => 
-        `$${params.value?.toFixed(2) || '0.00'}`
-    },
-    {
-      headerName: 'GM %',
-      field: 'gmPercent',
-      valueFormatter: (params: ValueFormatterParams) => 
-        `${(params.value * 100)?.toFixed(1) || '0.0'}%`,
-      cellStyle: (params) => {
-        const value = params.value;
-        if (value >= 0.4) return { backgroundColor: '#4CAF50' };
-        if (value >= 0.1) return { backgroundColor: '#FFEB3B' };
-        if (value > 0.05) return { backgroundColor: '#FF9800' };
-        return { backgroundColor: '#F44336' };
+  const dispatch = useAppDispatch();
+  const { rows } = useAppSelector((state) => state.planning);
+  const stores = useAppSelector((state) => state.stores.items);
+  const skus = useAppSelector((state) => state.skus.items);
+
+  const getStoreName = useCallback((storeId: number) => {
+    return stores.find(store => store.id === storeId)?.name || '';
+  }, [stores]);
+
+  const getSKUName = useCallback((skuId: string) => {
+    return skus.find(sku => sku.id === skuId)?.name || '';
+  }, [skus]);
+
+  const columnDefs = useMemo<ColDef[]>(() => {
+    const baseColumns: ColDef[] = [
+      {
+        headerName: 'Store',
+        field: 'storeId',
+        pinned: 'left',
+        valueGetter: params => getStoreName(params.data.storeId),
+        width: 200
+      },
+      {
+        headerName: 'SKU',
+        field: 'skuId',
+        pinned: 'left',
+        valueGetter: params => getSKUName(params.data.skuId),
+        width: 250
       }
+    ];
+
+    const currentYear = new Date().getFullYear();
+    const start = new Date(currentYear, 0, 1);
+    const end = new Date(currentYear, 11, 31);
+    
+    const weeks = eachWeekOfInterval({ start, end });
+    const monthGroups = new Map<string, ColDef[]>();
+
+    weeks.forEach(week => {
+      const month = format(week, 'MMMM');
+      const weekNumber = getWeek(week).toString().padStart(2, '0');
+      const weekKey = format(week, 'yyyy-MM-dd');
+
+      if (!monthGroups.has(month)) {
+        monthGroups.set(month, []);
+      }
+
+      const weekColumn: ColDef = {
+        headerName: `W${weekNumber}`,
+        marryChildren: true,
+        children: [
+          {
+            headerName: 'Sales Units',
+            field: `weeks.${weekKey}.salesUnits`,
+            editable: true,
+            width: 140,
+            cellDataType: 'number',
+            cellStyle: { textAlign: 'right' }
+          },
+          {
+            headerName: 'Sales Dollars',
+            field: `weeks.${weekKey}.salesDollars`,
+            width: 150,
+            valueFormatter: params => 
+              params.value?.toLocaleString('en-US', { 
+                style: 'currency', 
+                currency: 'USD',
+                minimumFractionDigits: 2
+              }) || '-',
+            cellStyle: { textAlign: 'right' }
+          },
+          {
+            headerName: 'GM Dollars',
+            field: `weeks.${weekKey}.gmDollars`,
+            width: 150,
+            valueFormatter: params => 
+              params.value?.toLocaleString('en-US', { 
+                style: 'currency', 
+                currency: 'USD',
+                minimumFractionDigits: 2
+              }) || '-',
+            cellStyle: { textAlign: 'right' }
+          },
+          {
+            headerName: 'GM Percent',
+            field: `weeks.${weekKey}.gmPercent`,
+            width: 150,
+            valueFormatter: params => 
+              params.value ? `${(params.value * 100).toFixed(1)}%` : '0.0%',
+            cellStyle: params => {
+              const value = params.value || 0;
+              return {
+                backgroundColor: 
+                  value >= 0.4 ? '#4CAF50' :
+                  value >= 0.1 ? '#FFEB3B' :
+                  value > 0.05 ? '#FF9800' : '#F44336',
+                color: value >= 0.4 ? 'white' : 'black',
+                textAlign: 'center',
+                fontWeight: 'bold'
+              };
+            }
+          }
+        ]
+      };
+
+      monthGroups.get(month)?.push(weekColumn);
+    });
+
+    // Add month group columns
+    Array.from(monthGroups).forEach(([month, weekColumns]) => {
+      baseColumns.push({
+        headerName: month,
+        headerClass: 'month-header',
+        children: weekColumns,
+        marryChildren: true
+      });
+    });
+
+    return baseColumns;
+  }, [getStoreName, getSKUName]);
+
+  const defaultColDef = useMemo(() => ({
+    resizable: true,
+    sortable: true,
+    // filter: true,
+    suppressMovable: true
+  }), []);
+
+  const onCellValueChanged = useCallback((params: any) => {
+    if (params.colDef.field?.includes('.salesUnits')) {
+      const [_, week] = params.colDef.field.split('.');
+      dispatch(updateSalesUnits({
+        storeId: params.data.storeId,
+        skuId: params.data.skuId,
+        week: week.replace('weeks.', ''),
+        value: params.newValue
+      }));
     }
-  ];
+  }, [dispatch]);
 
   return (
-    <div className="ag-theme-material" style={{ height: '600px', width: '100%' }}>
-      <AgGridReact<PlanningRow>
-        rowData={planningData}
+    <Box sx={{ 
+      height: 'calc(100vh - 180px)', 
+      width: '100%',
+      '& .ag-header-cell.month-header': {
+        backgroundColor: '#f0f0f0',
+        fontWeight: '600'
+      }
+    }}>
+      <AgGridReact
         columnDefs={columnDefs}
-        domLayout="autoHeight"
+        rowData={rows}
+        defaultColDef={defaultColDef}
+        onCellValueChanged={onCellValueChanged}
+        suppressRowClickSelection
+        animateRows
+        groupHeaderHeight={40}
+        headerHeight={40}
+        rowHeight={35}
+        className="ag-theme-material"
+        enableRangeSelection
+        enableCellTextSelection
       />
-    </div>
+    </Box>
   );
 };
 

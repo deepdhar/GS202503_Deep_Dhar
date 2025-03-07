@@ -1,13 +1,22 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SKU } from '../../types';
 
 interface SKUState {
   items: SKU[];
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: SKUState = {
-  items: []
+  items: [],
+  status: 'idle',
+  error: null
 };
+
+export const fetchSKUs = createAsyncThunk('skus/fetchSKUs', async () => {
+  const mockSKUs: SKU[] = [];
+  return mockSKUs;
+});
 
 const skuSlice = createSlice({
   name: 'skus',
@@ -29,6 +38,20 @@ const skuSlice = createSlice({
       items.splice(action.payload.newIndex, 0, movedItem);
       state.items = items;
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchSKUs.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchSKUs.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.items = action.payload;
+      })
+      .addCase(fetchSKUs.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to fetch SKUs';
+      });
   }
 });
 

@@ -18,11 +18,16 @@ export interface Store {
   export interface PlanningRow {
     storeId: number;
     skuId: string;
-    week: string;
-    salesUnits: number | null;
-    salesDollars: number | null;
-    gmDollars: number | null;
-    gmPercent: number | null;
+    price: number;  // From SKU
+    cost: number;   // From SKU
+    weeks: {
+      [weekId: string]: {
+        salesUnits: number | null;
+        salesDollars: number | null;
+        gmDollars: number | null;
+        gmPercent: number | null;
+      }
+    }
   }
 
   // Chart data

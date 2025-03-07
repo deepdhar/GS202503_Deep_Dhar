@@ -22,6 +22,8 @@ body {
   --ag-grid-size: 8px;
   --ag-list-item-height: 40px;
   --ag-font-size: 14px;
+  --ag-border-color: #e0e0e0;
+  --ag-row-border-width: 1px;
 }
 
 .ag-theme-material .ag-header-cell {
@@ -43,4 +45,18 @@ body {
 .ag-theme-material .ag-row-dragging {
   background: #fafafa;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+
+
+
+.ag-theme-material .ag-header-group-cell {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.ag-theme-material .ag-cell {
+  font-size: 13px;
+  padding: 0 8px;
 }

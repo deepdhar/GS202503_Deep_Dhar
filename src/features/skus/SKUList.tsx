@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -8,6 +8,7 @@ import { addSKU, deleteSKU, updateSKU, reorderSKUs } from './skuSlice';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SKU } from '../../types';
+import { initializePlanningData } from '../planning/planningSlice';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -17,6 +18,10 @@ const SKUList = () => {
   const [open, setOpen] = useState(false);
   const [editSKU, setEditSKU] = useState<SKU | null>(null);
   const { register, handleSubmit, reset, setValue } = useForm<SKU>();
+
+  useEffect(() => {
+    dispatch(initializePlanningData());
+  }, [dispatch]);
 
   const columnDefs = [
     {

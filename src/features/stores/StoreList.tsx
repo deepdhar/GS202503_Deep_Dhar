@@ -7,8 +7,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { Box, Button, IconButton, Modal, TextField, Typography } from '@mui/material';
 import { deleteStore, addStore, updateStore, reorderStores } from './storeSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { initializePlanningData } from '../planning/planningSlice';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -18,6 +19,10 @@ const StoreList = () => {
   const [open, setOpen] = useState(false);
   const [editStore, setEditStore] = useState<Store | null>(null);
   const { register, handleSubmit, reset, setValue } = useForm<Store>();
+
+  useEffect(() => {
+    dispatch(initializePlanningData());
+  }, [dispatch]);
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
