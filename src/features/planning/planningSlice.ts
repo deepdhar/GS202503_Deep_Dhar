@@ -4,6 +4,7 @@ import { RootState } from '../../app/store';
 import Store  from '../stores/storeSlice';
 import SKU  from '../skus/skuSlice';
 import { endOfYear, startOfYear, eachWeekOfInterval, format } from 'date-fns';
+import { produce } from 'immer';
 
 interface PlanningState {
   rows: PlanningRow[];
@@ -58,23 +59,24 @@ const planningSlice = createSlice({
       week: string;
       value: number;
     }>) => {
-      const row = state.rows.find(r => 
-        r.storeId === action.payload.storeId && 
-        r.skuId === action.payload.skuId
-      );
+        const row = state.rows.find(r => 
+          r.storeId === action.payload.storeId && 
+          r.skuId === action.payload.skuId
+        );
 
-      if (row) {
-        const weekData = row.weeks[action.payload.week];
-        if (weekData) {
-          // Update sales units and recalculate dependent values
-          weekData.salesUnits = action.payload.value;
-          weekData.salesDollars = action.payload.value * row.price;
-          weekData.gmDollars = weekData.salesDollars - (action.payload.value * row.cost);
-          weekData.gmPercent = weekData.salesDollars > 0 
-            ? weekData.gmDollars / weekData.salesDollars
-            : 0;
+        if (row) {
+          const weekKey = action.payload.week;
+          const weekData = row.weeks[weekKey];
+
+          if (weekData) {
+            console.log(weekData);
+            weekData.salesUnits = action.payload.value;
+            weekData.salesDollars = action.payload.value * row.price;
+            weekData.gmDollars = weekData.salesDollars - (action.payload.value * row.cost);
+            weekData.gmPercent = weekData.salesDollars > 0 
+              ? weekData.gmDollars / weekData.salesDollars : 0;
+          }
         }
-      }
     }
   },
   extraReducers: (builder) => {

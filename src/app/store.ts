@@ -10,6 +10,11 @@ export const store = configureStore({
     skus: skusReducer,
     planning: planningReducer
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      immutableCheck: false, // Disable for performance
+      serializableCheck: false
+    })
 });
 
 

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -15,9 +15,15 @@ const PlanningGrid = () => {
   const stores = useAppSelector((state) => state.stores.items);
   const skus = useAppSelector((state) => state.skus.items);
 
+  const [localRows, setLocalRows] = useState(() => structuredClone(rows));
+
   const getStoreName = useCallback((storeId: number) => {
     return stores.find(store => store.id === storeId)?.name || '';
   }, [stores]);
+
+  useEffect(() => {
+    setLocalRows(structuredClone(rows));
+  }, [rows]);
 
   const getSKUName = useCallback((skuId: string) => {
     return skus.find(sku => sku.id === skuId)?.name || '';
@@ -71,7 +77,6 @@ const PlanningGrid = () => {
           },
           {
             headerName: 'Sales Dollars',
-            editable: true,
             field: `weeks.${weekKey}.salesDollars`,
             width: 150,
             valueFormatter: params => 
@@ -117,7 +122,7 @@ const PlanningGrid = () => {
       };
 
       monthGroups.get(month)?.push(weekColumn);
-    });
+    }, [stores,skus]);
 
     // Add month group columns
     Array.from(monthGroups).forEach(([month, weekColumns]) => {
@@ -141,11 +146,14 @@ const PlanningGrid = () => {
 
   const onCellValueChanged = useCallback((params: any) => {
     if (params.colDef.field?.includes('.salesUnits')) {
-      const [_, week] = params.colDef.field.split('.');
+      // const [_, week] = params.colDef.field.split('.');
+      const [_, weekKey] = params.colDef.field.split('.weeks.');
+      const { storeId, skuId } = params.data;
+
       dispatch(updateSalesUnits({
-        storeId: params.data.storeId,
-        skuId: params.data.skuId,
-        week: week.replace('weeks.', ''),
+        storeId,
+        skuId,
+        week: weekKey.replace('salesUnits.', ''),
         value: params.newValue
       }));
     }
@@ -162,7 +170,7 @@ const PlanningGrid = () => {
     }}>
       <AgGridReact
         columnDefs={columnDefs}
-        rowData={rows}
+        rowData={localRows}
         defaultColDef={defaultColDef}
         onCellValueChanged={onCellValueChanged}
         suppressRowClickSelection
