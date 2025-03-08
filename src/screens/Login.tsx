@@ -24,8 +24,7 @@ const Login = () => {
       dispatch(loginSuccess());
       navigate('/');
     } else {
-      setError('Invalid username or password');
-      alert('Invalid username or password');
+      setError('Invalid credentials');
     }
   };
 
