@@ -6,7 +6,7 @@ import GMChart from "../features/chart/GMChart";
 import SKUList from "../features/skus/SKUList";
 import Login from "../screens/Login";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated');
 
   if (!isAuthenticated) {

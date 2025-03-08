@@ -4,7 +4,7 @@ import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { eachWeekOfInterval, format, getWeek } from 'date-fns';
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import { toggleDataView, updateSalesUnits } from './planningSlice';
 import ExcelDropzone from '../../components/ExcelDropzone';
 
@@ -170,32 +170,6 @@ const PlanningGrid = () => {
   }, [dispatch]);
 
   return (
-    // <Box sx={{ 
-    //   height: 'calc(100vh - 180px)', 
-    //   width: '100%',
-    //   '& .ag-header-cell.month-header': {
-    //     backgroundColor: '#f0f0f0',
-    //     fontWeight: '600'
-    //   }
-    // }}>
-    //   <AgGridReact
-    //     columnDefs={columnDefs}
-    //     ref={gridRef}
-    //     // rowData={rows}
-    //     rowData={localRows}
-    //     defaultColDef={defaultColDef}
-    //     onCellValueChanged={onCellValueChanged}
-    //     suppressRowClickSelection
-    //     animateRows
-    //     groupHeaderHeight={40}
-    //     headerHeight={40}
-    //     rowHeight={35}
-    //     className="ag-theme-material"
-    //     enableRangeSelection
-    //     enableCellTextSelection
-    //   />
-    // </Box>
-
     <div>
       <div style={{ marginBottom: 16, display: 'flex', gap: 16 }}>
         <ExcelDropzone />

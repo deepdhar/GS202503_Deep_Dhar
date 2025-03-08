@@ -8,7 +8,6 @@ import { initializePlanningData } from './features/planning/planningSlice';
 import { useAppDispatch, useAppSelector } from './app/store';
 import { fetchStores } from './features/stores/storeSlice';
 import { fetchSKUs } from './features/skus/skuSlice';
-import React from 'react'
 
 const App = () => {
   const dispatch = useAppDispatch();
