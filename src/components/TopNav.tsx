@@ -1,8 +1,18 @@
-// components/TopNav.tsx
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { ReactComponent as Logo} from '../assets/logo.svg'
+import { useAppDispatch } from '../app/store';
+import { logout } from '../features/auth/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 const TopNav = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
   return (
     <AppBar 
       position="static"
@@ -33,7 +43,9 @@ const TopNav = () => {
         <Typography variant="h3" component="div" sx={{ color:"#000", mr: 'auto', fontWeight: '600' }}>
           Data Viewer App
         </Typography>
-        <Button style={{color: '#000', fontSize: 16, fontWeight: '600'}}>Sign Out</Button>
+        <Button 
+          onClick={()=>handleLogOut()}
+          style={{color: '#000', fontSize: 16, fontWeight: '600'}}>Log Out</Button>
       </Toolbar>
     </AppBar>
   );

@@ -4,14 +4,17 @@ import { RootState } from '../../app/store';
 import Store  from '../stores/storeSlice';
 import SKU  from '../skus/skuSlice';
 import { endOfYear, startOfYear, eachWeekOfInterval, format } from 'date-fns';
-import { produce } from 'immer';
 
 interface PlanningState {
   rows: PlanningRow[];
+  excelData: PlanningRow[] | null;
+  useExcelData: boolean;
 }
 
 const initialState: PlanningState = {
-  rows: []
+  rows: [],
+  excelData: null,
+  useExcelData: false
 };
 
 const generateEmptyWeeks = (start: Date, end: Date) => {
@@ -59,24 +62,40 @@ const planningSlice = createSlice({
       week: string;
       value: number;
     }>) => {
-        const row = state.rows.find(r => 
-          r.storeId === action.payload.storeId && 
-          r.skuId === action.payload.skuId
-        );
+      const rowIndex = state.rows.findIndex(r => 
+        r.storeId === action.payload.storeId && 
+        r.skuId === action.payload.skuId
+      );
 
-        if (row) {
-          const weekKey = action.payload.week;
-          const weekData = row.weeks[weekKey];
+      if (rowIndex>-1) {
+        const row = state.rows[rowIndex];
+        const weekKey = action.payload.week
 
-          if (weekData) {
-            console.log(weekData);
-            weekData.salesUnits = action.payload.value;
-            weekData.salesDollars = action.payload.value * row.price;
-            weekData.gmDollars = weekData.salesDollars - (action.payload.value * row.cost);
-            weekData.gmPercent = weekData.salesDollars > 0 
-              ? weekData.gmDollars / weekData.salesDollars : 0;
+        const updatedWeek = {
+          ...row.weeks[weekKey],
+          salesUnits: action.payload.value,
+          salesDollars: action.payload.value * row.price,
+          gmDollars: (action.payload.value * row.price) - (action.payload.value * row.cost),
+          gmPercent: ((action.payload.value * row.price) - (action.payload.value * row.cost)) / 
+                    (action.payload.value * row.price) || 0
+        };
+
+        state.rows[rowIndex] = {
+          ...row,
+          weeks: {
+            ...row.weeks,
+            [weekKey]: updatedWeek
           }
-        }
+        };
+      }
+    },
+
+    importExcelData: (state, action: PayloadAction<PlanningRow[]>) => {
+      state.excelData = action.payload;
+      state.useExcelData = true;
+    },
+    toggleDataView: (state) => {
+      state.useExcelData = !state.useExcelData;
     }
   },
   extraReducers: (builder) => {
@@ -145,7 +164,7 @@ const planningSlice = createSlice({
   }
 });
 
-export const { initializeData, updateSalesUnits } = planningSlice.actions;
+export const { initializeData, updateSalesUnits, importExcelData, toggleDataView } = planningSlice.actions;
 // export const selectPlanningData = (state: RootState) => state.planning.rows;
 export default planningSlice.reducer;
 

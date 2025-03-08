@@ -3,9 +3,11 @@ import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import storesReducer from '../features/stores/storeSlice';
 import skusReducer from '../features/skus/skuSlice';
 import planningReducer from '../features/planning/planningSlice';
+import authReducer from '../features/auth/authSlice';
 
 export const store = configureStore({
   reducer: {
+    auth: authReducer,
     stores: storesReducer,
     skus: skusReducer,
     planning: planningReducer

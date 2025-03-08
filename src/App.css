@@ -8,23 +8,15 @@
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevent double scrollbars */
+  overflow: hidden;
 }
 
-/* Force content area to be visible */
+
 .MuiBox-root main {
   z-index: 10 !important;
-  background: white !important; /* Add background color */
+  background: white !important; 
 }
 
-
-.ag-theme-material {
-  --ag-grid-size: 8px;
-  --ag-list-item-height: 40px;
-  --ag-font-size: 14px;
-  --ag-border-color: #e0e0e0;
-  --ag-row-border-width: 1px;
-}
 
 .ag-theme-material .ag-header-cell {
   font-weight: 600;
@@ -32,31 +24,33 @@ body {
   color: #000;
   font-size:medium;
   cursor: default !important;
+  border: #000;
 }
 
 
-
-/* Enable row dragging cursor */
 .ag-theme-material .row-drag-handle {
   cursor: move;
 }
 
-/* Add visual feedback during drag */
+/* during drag */
 .ag-theme-material .ag-row-dragging {
   background: #fafafa;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-
-
-
-
-.ag-theme-material .ag-header-group-cell {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
 .ag-theme-material .ag-cell {
   font-size: 13px;
   padding: 0 8px;
+}
+
+p {
+  color: #000;
+}
+
+.login {
+  color: #000;
+}
+
+label {
+  color: #000;
 }

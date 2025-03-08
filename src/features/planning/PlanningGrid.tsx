@@ -1,25 +1,36 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { useAppDispatch, useAppSelector } from '../../app/store';
 import { eachWeekOfInterval, format, getWeek } from 'date-fns';
-import { Box } from '@mui/material';
-import { updateSalesUnits } from './planningSlice';
+import { Box, Button } from '@mui/material';
+import { toggleDataView, updateSalesUnits } from './planningSlice';
+import ExcelDropzone from '../../components/ExcelDropzone';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const PlanningGrid = () => {
   const dispatch = useAppDispatch();
-  const { rows } = useAppSelector((state) => state.planning);
+  const gridRef = useRef<AgGridReact>(null);
+  const { rows, excelData, useExcelData } = useAppSelector((state) => state.planning);
   const stores = useAppSelector((state) => state.stores.items);
   const skus = useAppSelector((state) => state.skus.items);
 
   const [localRows, setLocalRows] = useState(() => structuredClone(rows));
 
+  const currentData = useExcelData ? excelData : localRows;
+
   const getStoreName = useCallback((storeId: number) => {
     return stores.find(store => store.id === storeId)?.name || '';
   }, [stores]);
+
+  useEffect(() => {
+    if (gridRef.current?.api) {
+      gridRef.current.api.refreshCells({ force: true });
+      gridRef.current.api.redrawRows();
+    }
+  }, [rows]);
 
   useEffect(() => {
     setLocalRows(structuredClone(rows));
@@ -146,43 +157,77 @@ const PlanningGrid = () => {
 
   const onCellValueChanged = useCallback((params: any) => {
     if (params.colDef.field?.includes('.salesUnits')) {
-      // const [_, week] = params.colDef.field.split('.');
       const [_, weekKey] = params.colDef.field.split('.weeks.');
       const { storeId, skuId } = params.data;
 
       dispatch(updateSalesUnits({
         storeId,
         skuId,
-        week: weekKey.replace('salesUnits.', ''),
+        week: weekKey.replace('salesUnits', ''),
         value: params.newValue
       }));
     }
   }, [dispatch]);
 
   return (
-    <Box sx={{ 
-      height: 'calc(100vh - 180px)', 
-      width: '100%',
-      '& .ag-header-cell.month-header': {
-        backgroundColor: '#f0f0f0',
-        fontWeight: '600'
-      }
-    }}>
-      <AgGridReact
-        columnDefs={columnDefs}
-        rowData={localRows}
-        defaultColDef={defaultColDef}
-        onCellValueChanged={onCellValueChanged}
-        suppressRowClickSelection
-        animateRows
-        groupHeaderHeight={40}
-        headerHeight={40}
-        rowHeight={35}
-        className="ag-theme-material"
-        enableRangeSelection
-        enableCellTextSelection
-      />
-    </Box>
+    // <Box sx={{ 
+    //   height: 'calc(100vh - 180px)', 
+    //   width: '100%',
+    //   '& .ag-header-cell.month-header': {
+    //     backgroundColor: '#f0f0f0',
+    //     fontWeight: '600'
+    //   }
+    // }}>
+    //   <AgGridReact
+    //     columnDefs={columnDefs}
+    //     ref={gridRef}
+    //     // rowData={rows}
+    //     rowData={localRows}
+    //     defaultColDef={defaultColDef}
+    //     onCellValueChanged={onCellValueChanged}
+    //     suppressRowClickSelection
+    //     animateRows
+    //     groupHeaderHeight={40}
+    //     headerHeight={40}
+    //     rowHeight={35}
+    //     className="ag-theme-material"
+    //     enableRangeSelection
+    //     enableCellTextSelection
+    //   />
+    // </Box>
+
+    <div>
+      <div style={{ marginBottom: 16, display: 'flex', gap: 16 }}>
+        <ExcelDropzone />
+        <Button
+          sx={{
+            height: 100
+          }}
+          variant="contained"
+          onClick={() => dispatch(toggleDataView())}
+        >
+          {useExcelData ? 'View Original Data' : 'View Excel Data'}
+        </Button>
+      </div>
+
+      <div style={{ height: 'calc(100vh - 240px)', width: '100%' }}>
+        <AgGridReact
+          columnDefs={columnDefs}
+          ref={gridRef}
+          rowData={currentData || []}
+          defaultColDef={defaultColDef}
+          onCellValueChanged={onCellValueChanged}
+          suppressRowClickSelection
+          animateRows
+          groupHeaderHeight={40}
+          headerHeight={40}
+          rowHeight={35}
+          className="ag-theme-material"
+          enableRangeSelection
+          enableCellTextSelection
+        />
+      </div>
+    </div>
   );
 };
 

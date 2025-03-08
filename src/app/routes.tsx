@@ -1,11 +1,27 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../App";
 import StoreList from "../features/stores/StoreList";
 import PlanningGrid from "../features/planning/PlanningGrid";
 import GMChart from "../features/chart/GMChart";
 import SKUList from "../features/skus/SKUList";
+import Login from "../screens/Login";
+
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated');
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace/>;
+  }
+
+  return children;
+};
+
 
 const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <Login />,
+  },
   {
     path: "/",
     element: <App />,
@@ -16,19 +32,19 @@ const router = createBrowserRouter([
       },
       { 
         path: "skus", 
-        element: <SKUList /> 
+        element: <ProtectedRoute><SKUList /> </ProtectedRoute>
       },
       { 
         path: "planning", 
-        element: <PlanningGrid /> 
+        element: <ProtectedRoute><PlanningGrid /> </ProtectedRoute>
       },
       { 
         path: "chart", 
-        element: <GMChart /> 
+        element: <ProtectedRoute><GMChart /> </ProtectedRoute>
       },
       {
         index: true,
-        element: <StoreList />,
+        element: <ProtectedRoute><StoreList /></ProtectedRoute>
       },
     ],
   },
