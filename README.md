@@ -1,54 +1,69 @@
-# React + TypeScript + Vite
+# Data Viewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a Web App to manage and view data of Stores and SKUs as well as do full proof planning and see statistics.
+[Click here for live](https://gs-202503-deep-dhar.vercel.app/)
 
-Currently, two official plugins are available:
+---
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Modern development** with Vite 
+- **Responsive UI** built with **MUI (Material-UI)** 
+- **State management** using Redux Toolkit 
+- **Client-side routing** with React Router 
+- **AG Grid** integration for data tables 
+- **Authentication flow** with protected routes 
+- **Type-safe** codebase with TypeScript
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- ⚛️ React 18+
+- 🚀 Vite 4+
+- 📘 TypeScript
+- 🎭 MUI (Material-UI)
+- 🧮 AG Grid
+- 🧭 React Router 6
+- 🧺 Redux Toolkit
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+ / yarn 1.22+
+- Git
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/deepdhar/GS202503_Deep_Dhar.git
+cd GS202503_Deep_Dhar
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. **Install dependencies**
+```bash
+npm install
 ```
+
+3. **Run development server**
+```bash
+npm run dev
+```
+
+---
+
+## Things that I've done well?
+- Implement AG Grid and AG Chart for the data
+- Implement solid state management and routing with redux and react-router-dom respectively.
+- Create responsive web page that doesn't break on dimensional changes.
+- Well defined project structure for everyone to understand if the next day it gets in the development pipeline.
+- Maintaining types while creating reusable components for efficient coding.
+- Use popular libraries like Material UI
+
+## Things I could have improved given 4 more hours?
+- Fix the planning grid non-functionality of columns - Sales Dollars, GM Dollars, and GM Percent as it is a vital part for the assessment
+- Improve the UI
+- Implement the Chart
+  
