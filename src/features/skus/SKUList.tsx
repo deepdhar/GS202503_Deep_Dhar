@@ -162,7 +162,7 @@ const SKUList = () => {
           boxShadow: 24,
           p: 4
         }}>
-          <Typography variant="h6" mb={2}>
+          <Typography color='#000' variant="h6" mb={2}>
             {editSKU ? 'Edit SKU' : 'Add New SKU'}
           </Typography>
           <form onSubmit={handleSubmit(handleAddSKU)}>
